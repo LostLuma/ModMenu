@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.annotations.SerializedName;
 import com.terraformersmc.modmenu.ModMenu;
+import com.terraformersmc.modmenu.api.UpdateChannel;
 import com.terraformersmc.modmenu.api.UpdateChecker;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.util.mod.Mod;
@@ -109,6 +110,7 @@ public class UpdateCheckerUtil {
 				responseObject.asMap().forEach((lookupHash, versionJson) -> {
 					var versionObj = versionJson.getAsJsonObject();
 					var projectId = versionObj.get("project_id").getAsString();
+					var versionType = versionObj.get("version_type").getAsString();
 					var versionNumber = versionObj.get("version_number").getAsString();
 					var versionId = versionObj.get("id").getAsString();
 					var primaryFile = versionObj.get("files").getAsJsonArray().asList().stream()
@@ -118,19 +120,28 @@ public class UpdateCheckerUtil {
 						return;
 					}
 
+					var updateChannel = UpdateCheckerUtil.getUpdateChannel(versionType);
 					var versionHash = primaryFile.get().getAsJsonObject().get("hashes").getAsJsonObject().get("sha512").getAsString();
 
 					if (!Objects.equals(versionHash, lookupHash)) {
 						// hashes different, there's an update.
 						modHashes.get(lookupHash).forEach(mod -> {
 							LOGGER.info("Update available for '{}@{}', (-> {})", mod.getId(), mod.getVersion(), versionNumber);
-							mod.setUpdateInfo(new ModrinthUpdateInfo(projectId, versionId, versionNumber));
+							mod.setUpdateInfo(new ModrinthUpdateInfo(projectId, versionId, versionNumber, updateChannel));
 						});
 					}
 				});
 			}
 		} catch (IOException | InterruptedException e) {
 			LOGGER.error("Error checking for updates: ", e);
+		}
+	}
+
+	private static UpdateChannel getUpdateChannel(String versionType) {
+		try {
+			return UpdateChannel.valueOf(versionType.toUpperCase(Locale.ROOT));
+		} catch (IllegalArgumentException | NullPointerException e) {
+			return UpdateChannel.RELEASE;
 		}
 	}
 
