@@ -13,7 +13,7 @@ public enum UpdateChannel {
 	/**
 	 * @return the user's preferred update channel.
 	 */
-	public UpdateChannel getUserPreference() {
+	public static UpdateChannel getUserPreference() {
 		return ModMenuConfig.UPDATE_CHANNEL.getValue();
 	}
 }

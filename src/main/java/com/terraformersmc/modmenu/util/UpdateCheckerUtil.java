@@ -86,7 +86,20 @@ public class UpdateCheckerUtil {
 			.get().getMetadata().getVersion().getFriendlyString().split("\\+", 1); // Strip build metadata for privacy
 		final var modMenuVersion = splitVersion.length > 1 ? splitVersion[1] : splitVersion[0];
 		final var userAgent = "%s/%s (%s/%s%s)".formatted(ModMenu.GITHUB_REF, modMenuVersion, mcVer, primaryLoader, environment);
-		String body = ModMenu.GSON_MINIFIED.toJson(new LatestVersionsFromHashesBody(modHashes.keySet(), loaders, mcVer));
+
+		List<UpdateChannel> updateChannels;
+		UpdateChannel preferredChannel = UpdateChannel.getUserPreference();
+
+		if (preferredChannel == UpdateChannel.RELEASE) {
+			updateChannels = List.of(UpdateChannel.RELEASE);
+		} else if (preferredChannel == UpdateChannel.BETA) {
+			updateChannels = List.of(UpdateChannel.BETA, UpdateChannel.RELEASE);
+		} else {
+			updateChannels = List.of(UpdateChannel.ALPHA, UpdateChannel.BETA, UpdateChannel.RELEASE);
+		}
+
+		String body = ModMenu.GSON_MINIFIED.toJson(new LatestVersionsFromHashesBody(modHashes.keySet(), loaders, mcVer, updateChannels));
+
 		LOGGER.debug("User agent: " + userAgent);
 		LOGGER.debug("Body: " + body);
 		var latestVersionsRequest = HttpRequest.newBuilder()
@@ -161,11 +174,14 @@ public class UpdateCheckerUtil {
 		public Collection<String> loaders;
 		@SerializedName("game_versions")
 		public Collection<String> gameVersions;
+		@SerializedName("version_types")
+		public Collection<String> versionTypes;
 
-		public LatestVersionsFromHashesBody(Collection<String> hashes, Collection<String> loaders, String mcVersion) {
+		public LatestVersionsFromHashesBody(Collection<String> hashes, Collection<String> loaders, String mcVersion, Collection<UpdateChannel> updateChannels) {
 			this.hashes = hashes;
 			this.loaders = loaders;
 			this.gameVersions = Set.of(mcVersion);
+			this.versionTypes = updateChannels.stream().map(value -> value.toString().toLowerCase()).toList();
 		}
 	}
 }
