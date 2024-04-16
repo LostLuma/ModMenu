@@ -46,12 +46,14 @@ public class UpdateCheckerUtil {
 	}
 
 	public static void checkForCustomUpdates() {
+		UpdateChannel preferredChannel = ModMenuConfig.UPDATE_CHANNEL.getValue();
+
 		ModMenu.MODS.values().stream().filter(UpdateCheckerUtil::allowsUpdateChecks).forEach(mod -> {
 			UpdateChecker updateChecker = mod.getUpdateChecker();
 			if (updateChecker == null) {
 				return;
 			}
-			UpdateCheckerThread.run(mod, () -> mod.setUpdateInfo(updateChecker.checkForUpdates()));
+			UpdateCheckerThread.run(mod, () -> mod.setUpdateInfo(updateChecker.checkForUpdates(preferredChannel)));
 		});
 	}
 
