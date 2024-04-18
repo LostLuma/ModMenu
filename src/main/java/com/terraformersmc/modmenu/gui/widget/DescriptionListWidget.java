@@ -219,9 +219,13 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 
 							while (iterator.hasNext()) {
 								int indent = 8;
-								var role = iterator.next();
 
-								for (var line : textRenderer.wrapLines(Text.literal(role.getKey() + ":"), wrapWidth - 16)) {
+								var role = iterator.next();
+								var rolename = role.getKey();
+
+								var name = Text.translatableWithFallback("modmenu.credits.role." + rolename.toLowerCase(), rolename);
+
+								for (var line : textRenderer.wrapLines(name.append(Text.literal(":")), wrapWidth - 16)) {
 									children().add(new DescriptionEntry(line, indent));
 									indent = 16;
 								}
