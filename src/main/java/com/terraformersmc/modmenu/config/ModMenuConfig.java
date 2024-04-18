@@ -44,8 +44,8 @@ public class ModMenuConfig {
 	public static final StringSetConfigOption DISABLE_UPDATE_CHECKER = new StringSetConfigOption("disable_update_checker", new HashSet<>());
 	public static final BooleanConfigOption UPDATE_CHECKER = new BooleanConfigOption("update_checker", true);
 	public static final BooleanConfigOption BUTTON_UPDATE_BADGE = new BooleanConfigOption("button_update_badge", true);
-	public static final BooleanConfigOption QUICK_CONFIGURE = new BooleanConfigOption("quick_configure", true);
 	public static final EnumConfigOption<UpdateChannel> UPDATE_CHANNEL = new EnumConfigOption<>("update_channel", UpdateChannel.RELEASE);
+	public static final BooleanConfigOption QUICK_CONFIGURE = new BooleanConfigOption("quick_configure", true);
 
 	public static SimpleOption<?>[] asOptions() {
 		ArrayList<SimpleOption<?>> options = new ArrayList<>();
