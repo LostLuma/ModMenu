@@ -221,11 +221,11 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 								int indent = 8;
 
 								var role = iterator.next();
-								var rolename = role.getKey();
+								var roleName = role.getKey();
 
-								var name = Text.translatableWithFallback("modmenu.credits.role." + rolename.toLowerCase(), rolename);
+								var component = Text.translatableWithFallback("modmenu.credits.role." + roleName.toLowerCase(), roleName);
 
-								for (var line : textRenderer.wrapLines(name.append(Text.literal(":")), wrapWidth - 16)) {
+								for (var line : textRenderer.wrapLines(component.append(Text.literal(":")), wrapWidth - 16)) {
 									children().add(new DescriptionEntry(line, indent));
 									indent = 16;
 								}
