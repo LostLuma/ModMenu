@@ -223,9 +223,7 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 								var role = iterator.next();
 								var roleName = role.getKey();
 
-								var component = Text.translatableWithFallback("modmenu.credits.role." + roleName.toLowerCase(), roleName);
-
-								for (var line : textRenderer.wrapLines(component.append(Text.literal(":")), wrapWidth - 16)) {
+								for (var line : textRenderer.wrapLines(this.creditsRoleText(roleName), wrapWidth - 16)) {
 									children().add(new DescriptionEntry(line, indent));
 									indent = 16;
 								}
@@ -350,6 +348,18 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 			bufferBuilder.vertex(scrollbarStartX, q, 0.0D).color(192, 192, 192, 255).next();
 			tessellator.draw();
 		}
+	}
+
+	private Text creditsRoleText(String roleName) {
+		// Replace spaces and dashes in role names with underscores if they exist
+		// Notably Quilted Fabric API does this with FabricMC as "Upstream Owner"
+		var translationKey = roleName.replaceAll("[\s-]", "_");
+
+		// Add an s to the default untranslated string if it ends in r since this
+		// Fixes common role names people use in English (e.g. Author -> Authors)
+		var fallback = roleName.endsWith("r") ? roleName + "s" : roleName;
+
+		return Text.translatableWithFallback("modmenu.credits.role." + translationKey, fallback).append(Text.literal(":"));
 	}
 
 	protected class DescriptionEntry extends ElementListWidget.Entry<DescriptionEntry> {
