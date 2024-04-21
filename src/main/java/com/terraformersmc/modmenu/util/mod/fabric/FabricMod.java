@@ -228,8 +228,8 @@ public class FabricMod implements Mod {
 		var authors = this.getAuthors();
 		var contributors = this.getContributors();
 
-		if (!authors.isEmpty()) {
-			contributors.put("Author", authors);
+		for (var author : authors) {
+			contributors.put(author, List.of("Author"));
 		}
 
 		for (var contributor : contributors.entrySet()) {
