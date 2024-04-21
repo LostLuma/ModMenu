@@ -23,7 +23,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class QuiltMod extends FabricMod {
@@ -68,15 +70,15 @@ public class QuiltMod extends FabricMod {
 	}
 
 	@Override
-	public @NotNull SortedMap<String, Collection<String>> getCredits() {
-		SortedMap<String, Collection<String>> credits = new TreeMap<>();
+	public @NotNull SortedMap<String, SortedSet<String>> getCredits() {
+		SortedMap<String, SortedSet<String>> credits = new TreeMap<>();
 
 		var contributors = this.getContributors();
 
 		for (var contributor : contributors.entrySet()) {
 			for (var role : contributor.getValue()) {
-				credits.computeIfAbsent(role, key -> new ArrayList<>());
-				credits.get(role).add(contributor.getKey()); // Add name
+				credits.computeIfAbsent(role, key -> new TreeSet<>(String.CASE_INSENSITIVE_ORDER));
+				credits.get(role).add(contributor.getKey());
 			}
 		}
 
