@@ -15,15 +15,14 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -63,15 +62,18 @@ public class QuiltMod extends FabricMod {
 		Map<String, Collection<String>> contributors = new HashMap<>();
 
 		for (var contributor : this.metadata.contributors()) {
-			contributors.put(contributor.name(), contributor.roles());
+			// For Fabric mods a contributor may appear twice
+			// If they are both an Author and Contributor ...
+			contributors.computeIfAbsent(contributor.name(), name -> new HashSet<>());
+			contributors.get(contributor.name()).addAll(contributor.roles());
 		}
 
 		return contributors;
 	}
 
 	@Override
-	public @NotNull SortedMap<String, SortedSet<String>> getCredits() {
-		SortedMap<String, SortedSet<String>> credits = new TreeMap<>();
+	public @NotNull SortedMap<String, Set<String>> getCredits() {
+		SortedMap<String, Set<String>> credits = new TreeMap<>();
 
 		var contributors = this.getContributors();
 

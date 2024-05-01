@@ -212,7 +212,7 @@ public class FabricMod implements Mod {
 
 	@Override
 	public @NotNull Map<String, Collection<String>> getContributors() {
-		Map<String, Collection<String>> contributors = new HashMap<>();
+		Map<String, Collection<String>> contributors = new LinkedHashMap<>();
 
 		for (var contributor : this.metadata.getContributors()) {
 			contributors.put(contributor.getName(), List.of("Contributor"));
@@ -222,19 +222,21 @@ public class FabricMod implements Mod {
 	}
 
 	@Override
-	public @NotNull SortedMap<String, SortedSet<String>> getCredits() {
-		SortedMap<String, SortedSet<String>> credits = new TreeMap<>();
+	public @NotNull SortedMap<String, Set<String>> getCredits() {
+		SortedMap<String, Set<String>> credits = new TreeMap<>();
 
 		var authors = this.getAuthors();
-		var contributors = this.getContributors();
+		credits.put("Author", new LinkedHashSet<>());
 
 		for (var author : authors) {
-			contributors.put(author, List.of("Author"));
+			credits.get("Author").add(author);
 		}
+
+		var contributors = this.getContributors();
 
 		for (var contributor : contributors.entrySet()) {
 			for (var role : contributor.getValue()) {
-				credits.computeIfAbsent(role, key -> new TreeSet<>(String.CASE_INSENSITIVE_ORDER));
+				credits.computeIfAbsent(role, key -> new LinkedHashSet<>());
 				credits.get(role).add(contributor.getKey());
 			}
 		}
